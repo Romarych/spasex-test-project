@@ -26,10 +26,15 @@ export const companyReducer = (state = initialState, action: ActionsTypes): Init
                 ...state,
                 companies: action.payload
             }
-        case 'SET_SEARCH_QUERY_COMPANY':
+        case 'SET_SEARCH_QUERY':
             return {
                 ...state,
                 searchQuery: action.payload
+            }
+        case 'UPATE_BOXES':
+            return {
+                ...state,
+                companies: state.companies.map(company => company.id === action.payload.id ? { ...company, boxes: action.payload.boxes } : company)
             }
         default:
             return state
@@ -38,7 +43,8 @@ export const companyReducer = (state = initialState, action: ActionsTypes): Init
 
 export const actions = {
     setCompanies: (companies: CompaniesType) => ({ type: 'SET_COMPANY', payload: companies } as const),
-    setSearchQuery: (company: string) => ({ type: 'SET_SEARCH_QUERY_COMPANY', payload: company } as const),
+    setSearchQuery: (company: string) => ({ type: 'SET_SEARCH_QUERY', payload: company } as const),
+    updateBoxes: (id: string, boxes: string) => ({ type: 'UPATE_BOXES', payload: { id, boxes } } as const),
 }
 
 export const getCompanies = (): ThunkType => async (dispatch) => {
@@ -59,4 +65,5 @@ export const saveCompanies = (): ThunkType => (dispatch, getState) => {
     const data = getState().sidebar.companies[0].id == '' ? '' : JSON.stringify(getState().sidebar.companies)
     localStorage.setItem('companys', data)
 }
+
 
