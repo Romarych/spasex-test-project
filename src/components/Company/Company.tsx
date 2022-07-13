@@ -10,9 +10,10 @@ import { AnyAction, Dispatch } from 'redux'
 export const Company: FC = () => {
   const companies = useSelector(getCompaniesSelector)
   let { id } = useParams()
+
   let company = companies.find(c => c.name.replace(/\s+/g, '-').toLowerCase() === id)
 
-  const [string, setString] = useState<string | null>('')
+  const [string, setString] = useState<string | null >()
   const [cargoBays, setCargoBays] = useState<ReactNode>(0)
   const dispathc = useDispatch<Dispatch<AnyAction>>()
 
@@ -29,15 +30,23 @@ export const Company: FC = () => {
   }, [company?.boxes])
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value
-    .replace(/[^0-9\.\,]/g, '')
+    let value: any = e.target.value
+    .split(",")
+    .map(e => e.replace(/\./,"#").replace(/\./g,"")
+    .replace(/#/,"."))
+    .filter(v => v !== '.').filter(v => v !== ',').join()
+    .replace(/[^0-9\,.]/g, '')
     .replace(/,/g, " ")
     .replace(/\s+/g, ' ')
     .replace(/ /ig, ',')
     .replace(/\./g, " ")
     .replace(/\s+/g, ' ')
     .replace(/ /ig, '.')
-
+  
+   
+    
+    console.log(value.split(",").reduce( ( a:any, c:any ) => a+(+c), 0 ))
+    
     numberOfRequired(value)
     setString(value)
     dispathc(actions.updateBoxes(company?.id as string, value))
@@ -50,9 +59,10 @@ export const Company: FC = () => {
       <h3 >Number of required cargo bays {cargoBays || 0}</h3>
       <h3>Cargo boxes</h3>
       <input
+      pattern="[0-9]*"
         value={string || ''}
         onChange={onChange}
-        type="text"
+        type='text'
         name=''
         style={{
           fontSize: 16,
