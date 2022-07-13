@@ -34,8 +34,11 @@ export const Company: FC = () => {
     .split(",")
     .map(e => e.replace(/\./,"#").replace(/\./g,"")
     .replace(/#/,"."))
-    .filter(v => v !== '.')
-    .filter(v => v !== ',')
+    .filter(v => v !== '.' && v !== ',')
+    .filter(v => v !== '01' && v !== '02' 
+    && v !== '03' && v !== '04' && v !== '05' 
+    && v !== '06' && v !== '07' && v !== '08' 
+    && v !== '09')
     .join()
     .replace(/[^0-9\,.]/g, '')
     .replace(/,/g, " ")
@@ -47,7 +50,8 @@ export const Company: FC = () => {
     .replace(/[0]/g, " ")
     .replace(/\s+/g, ' ')
     .replace(/ /ig, '0')
-      
+    .replace(/\.0+/, '.')
+
     numberOfRequired(value)
     setString(value)
     dispathc(actions.updateBoxes(company?.id as string, value))
