@@ -34,11 +34,10 @@ export const Company: FC = () => {
     .split(",")
     .map(e => e.replace(/\./,"#").replace(/\./g,"")
     .replace(/#/,"."))
-    .filter(v => v !== '.' && v !== ',')
     .filter(v => v !== '01' && v !== '02' 
     && v !== '03' && v !== '04' && v !== '05' 
     && v !== '06' && v !== '07' && v !== '08' 
-    && v !== '09')
+    && v !== '09' && v !== '.' && v !== ',')
     .join()
     .replace(/[^0-9\,.]/g, '')
     .replace(/,/g, " ")
@@ -64,7 +63,6 @@ export const Company: FC = () => {
       <h3 >Number of required cargo bays {cargoBays || 0}</h3>
       <h3>Cargo boxes</h3>
       <input
-      pattern="[0-9]*"
         value={string || ''}
         onChange={onChange}
         type='text'
