@@ -42,11 +42,7 @@ export const Company: FC = () => {
     .replace(/\./g, " ")
     .replace(/\s+/g, ' ')
     .replace(/ /ig, '.')
-  
-   
-    
-    console.log(value.split(",").reduce( ( a:any, c:any ) => a+(+c), 0 ))
-    
+      
     numberOfRequired(value)
     setString(value)
     dispathc(actions.updateBoxes(company?.id as string, value))
