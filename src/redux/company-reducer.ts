@@ -1,67 +1,56 @@
-import { InferActionsTypes, BaseThunkType } from './store'
+import { AppDispatch, AppState } from './store'
 import { companysAPI } from '../api/api'
 import { toast } from 'react-toastify'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export type InitialStateType = typeof initialState
-export type CompaniesType = typeof initialState.companies
-export type ThunkType = BaseThunkType<ActionsTypes>
-type ActionsTypes = InferActionsTypes<typeof actions>
+export interface ICompanies {
+    id: string
+    name: string
+    email: string
+    boxes: string | null
+}
 
-let initialState = {
-    companies: [
-        {
-            id: '',
-            name: '',
-            email: '',
-            boxes: '' as string | null
-        }
-    ],
+interface IState {
+    companies: ICompanies[]
+    searchQuery: string
+}
+
+let initialState: IState = {
+    companies: [],
     searchQuery: ''
 }
 
-export const companyReducer = (state = initialState, action: ActionsTypes): InitialStateType => {
-    switch (action.type) {
-        case 'SET_COMPANY':
-            return {
-                ...state,
-                companies: action.payload
-            }
-        case 'SET_SEARCH_QUERY':
-            return {
-                ...state,
-                searchQuery: action.payload
-            }
-        case 'UPATE_BOXES':
-            return {
-                ...state,
-                companies: state.companies.map(company => company.id === action.payload.id ? { ...company, boxes: action.payload.boxes } : company)
-            }
-        default:
-            return state
-    }
-}
+export const companySlice = createSlice({
+    name: 'company',
+    initialState,
+    reducers: {
+        setCompanies(state, action: PayloadAction<ICompanies[]>) {
+            state.companies = action.payload
+        },
+        setSearchQuery(state, action: PayloadAction<string>) {
+            state.searchQuery = action.payload
+        },
+        updateBoxes(state, action: PayloadAction<{ id: string, boxes: string }>) {
+            state.companies = state.companies.map(company => company.id === action.payload.id ? { ...company, boxes: action.payload.boxes } : company)
+        }
+    },
+})
 
-export const actions = {
-    setCompanies: (companies: CompaniesType) => ({ type: 'SET_COMPANY', payload: companies } as const),
-    setSearchQuery: (company: string) => ({ type: 'SET_SEARCH_QUERY', payload: company } as const),
-    updateBoxes: (id: string, boxes: string) => ({ type: 'UPATE_BOXES', payload: { id, boxes } } as const),
-}
-
-export const getCompanies = (): ThunkType => async (dispatch) => {
+export const getCompanies =  () => async (dispatch: AppDispatch) => {
     let data = await companysAPI.getCompanys()
-    dispatch(actions.setCompanies(data))
+    dispatch(companySlice.actions.setCompanies(data))
 }
 
-export const getCompaniesStorage = (): ThunkType => (dispatch) => {
+export const getCompaniesStorage = () => (dispatch: AppDispatch) => {
     let data = localStorage.getItem('companys')
-    if (data) {
-        dispatch(actions.setCompanies(JSON.parse(data)))
-    } else {
-        toast.error('No saved data, download them online')
-    }
+    data ? dispatch(companySlice.actions.setCompanies(JSON.parse(data)))
+        : toast.error('No saved data, download them online')
 }
 
-export const saveCompanies = (): ThunkType => (dispatch, getState) => {
-    const data = getState().sidebar.companies[0].id == '' ? '' : JSON.stringify(getState().sidebar.companies)
+export const saveCompanies = () => (dispatch: AppDispatch, getState: () => AppState) => {
+    const data = !getState().companyReducer.companies[0] ? ''
+        : JSON.stringify(getState().companyReducer.companies)
     localStorage.setItem('companys', data)
 }
+
+export default companySlice.reducer

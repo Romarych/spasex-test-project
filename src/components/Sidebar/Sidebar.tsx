@@ -1,15 +1,13 @@
 import { Grid } from '@material-ui/core'
 import React, { FC, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 import { getCompaniesStorage } from '../../redux/company-reducer'
 import { getCompaniesSelector } from '../../redux/company-selector'
-import { Dispatch } from 'redux'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 
 export const Sidebar: FC = () => {
-  const companies = useSelector(getCompaniesSelector)
-  const dispatch = useDispatch<Dispatch<any>>()
+  const companies = useAppSelector(getCompaniesSelector)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     dispatch(getCompaniesStorage())

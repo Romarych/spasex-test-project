@@ -1,16 +1,15 @@
 import React, { ChangeEvent, FC, useState } from 'react'
 import { Box, Grid } from '@material-ui/core'
 import { Search } from '@material-ui/icons'
-import { useDispatch } from 'react-redux'
-import { actions } from '../../../redux/company-reducer'
-import { AnyAction, Dispatch } from 'redux'
+import { companySlice } from '../../../redux/company-reducer'
+import { useAppDispatch } from '../../../redux/hooks'
 
 export const SearchQuery: FC = () => {
-    const dispatch = useDispatch<Dispatch<AnyAction>>()
+    const dispatch = useAppDispatch()
     const [string, setString] = useState<string>('')
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(actions.setSearchQuery(e.target.value))
+        dispatch(companySlice.actions.setSearchQuery(e.target.value))
         setString(e.target.value)
     }
 

@@ -1,21 +1,19 @@
 import { Box } from '@material-ui/core'
 import React, { ChangeEvent, FC, ReactNode, useEffect, useState } from 'react'
 import { getCompaniesSelector } from '../../redux/company-selector'
-import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { actions } from '../../redux/company-reducer'
-import { useDispatch } from 'react-redux'
-import { AnyAction, Dispatch } from 'redux'
+import { companySlice } from '../../redux/company-reducer'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 
 export const Company: FC = () => {
-  const companies = useSelector(getCompaniesSelector)
+  const companies = useAppSelector(getCompaniesSelector)
   let { id } = useParams()
 
   let company = companies.find(c => c.name.replace(/\s+/g, '-').toLowerCase() === id)
 
   const [string, setString] = useState<string | null >()
   const [cargoBays, setCargoBays] = useState<ReactNode>(0)
-  const dispathc = useDispatch<Dispatch<AnyAction>>()
+  const dispatch = useAppDispatch()
 
   const numberOfRequired = (boxes: string | null) => {
     let arr = boxes?.replace(/^,|,$/g,'').split(",")
@@ -34,26 +32,26 @@ export const Company: FC = () => {
     .split(",")
     .map(e => e.replace(/\./,"#").replace(/\./g,"")
     .replace(/#/,"."))
-    .filter(v => v !== '01' && v !== '02' 
+    .filter(v => v !== '01' && v !== '02' && v !== '00'
     && v !== '03' && v !== '04' && v !== '05' 
     && v !== '06' && v !== '07' && v !== '08' 
     && v !== '09' && v !== '.' && v !== ',')
     .join()
     .replace(/[^0-9\,.]/g, '')
-    .replace(/,/g, " ")
+    .replace(/,/g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/ /ig, ',')
-    .replace(/\./g, " ")
+    .replace(/\./g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/ /ig, '.')
-    .replace(/[0]/g, " ")
-    .replace(/\s+/g, ' ')
-    .replace(/ /ig, '0')
-    .replace(/\.0+/, '.')
+    // .replace(/[0]/g, " ")
+    // .replace(/\s+/g, ' ')
+    // .replace(/ /ig, '0')
+    // .replace(/\.0+/, '.')
 
     numberOfRequired(value)
     setString(value)
-    dispathc(actions.updateBoxes(company?.id as string, value))
+    dispatch(companySlice.actions.updateBoxes({id: company?.id as string, boxes: value}))
   }
 
   return <>

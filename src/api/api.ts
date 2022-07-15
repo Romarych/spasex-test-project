@@ -1,5 +1,5 @@
 import axios from "axios"
-import { CompaniesType } from "../redux/company-reducer"
+import { ICompanies } from "../redux/company-reducer"
 
 const url = `shipments.json`
 
@@ -9,7 +9,7 @@ export const instance = axios.create({
 
 export const companysAPI = {
     async getCompanys() {
-        const response = await instance.get<CompaniesType>(``)
+        const response = await instance.get<ICompanies[]>(``)
         return response.data
     }
 }

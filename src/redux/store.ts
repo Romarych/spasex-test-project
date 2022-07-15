@@ -1,17 +1,17 @@
-import { Action, applyMiddleware, combineReducers, compose } from "redux"
-import { legacy_createStore as createStore} from 'redux'
-import {companyReducer} from './company-reducer'
-import thunkMiddleware, { ThunkAction } from "redux-thunk"
+import { combineReducers, configureStore } from "@reduxjs/toolkit"
+import companyReducer from './company-reducer'
 
 let rootReducer = combineReducers({
-    sidebar: companyReducer
+    companyReducer
 })
 
-export type InferActionsTypes<T> = T extends {[key: string]: (...args: any[]) => infer U} ? U : never 
-export type BaseThunkType<A extends Action, R = Promise<void> | void> = ThunkAction<R, AppStateType, unknown, A>
+export const store = configureStore({
+    reducer: rootReducer
+})
 
-export type RootReducerType = typeof rootReducer
-export type AppStateType = ReturnType<RootReducerType>
+export const setupStore = () => store
 
-export const store = createStore(rootReducer, compose(applyMiddleware(thunkMiddleware)))
+export type AppState = ReturnType<typeof rootReducer>
+export type AppStore = ReturnType<typeof setupStore>
+export type AppDispatch = AppStore['dispatch']
 
